@@ -43,6 +43,11 @@ commands:
         usage: /<command> [player]
         permission: ${project.artifactId}.command.cracked
 
+    cracklist:
+        description: 'Add the player specified to the cracklist'
+        usage: /<command> [player]
+        permission: ${project.artifactId}.command.cracklist
+
 permissions:
     ${project.artifactId}.command.premium:
         description: 'Label themselves as premium'
@@ -61,3 +66,7 @@ permissions:
         description: 'Label others as cracked'
         children:
             ${project.artifactId}.command.cracked: true
+
+    ${project.artifactId}.command.cracklist:
+        description: 'Allow others into cracklist'
+        default: true

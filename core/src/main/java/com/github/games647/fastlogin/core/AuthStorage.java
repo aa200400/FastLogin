@@ -189,6 +189,22 @@ public class AuthStorage {
         return null;
     }
 
+    public boolean existsProfile(String name) {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement loadStmt = con.prepareStatement(LOAD_BY_NAME)
+        ) {
+            loadStmt.setString(1, name);
+
+            try (ResultSet resultSet = loadStmt.executeQuery()) {
+                return resultSet.isBeforeFirst();
+            }
+        } catch (SQLException sqlEx) {
+            core.getPlugin().getLog().error("Failed to query profile: {}", name, sqlEx);
+        }
+
+        return false;
+    }
+
     private Optional<StoredProfile> parseResult(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
             long userId = resultSet.getInt(1);

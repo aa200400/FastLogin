@@ -33,6 +33,7 @@ import com.github.games647.fastlogin.bukkit.event.BukkitFastLoginPreLoginEvent;
 import com.github.games647.fastlogin.core.StoredProfile;
 import com.github.games647.fastlogin.core.shared.JoinManagement;
 import com.github.games647.fastlogin.core.shared.event.FastLoginPreLoginEvent;
+import com.github.games647.fastlogin.core.*;
 
 import java.security.PublicKey;
 import java.util.Random;
@@ -117,8 +118,17 @@ public class NameCheckTask extends JoinManagement<Player, CommandSender, Protoco
 
     @Override
     public void startCrackedSession(ProtocolLibLoginSource source, StoredProfile profile, String username) {
-        BukkitLoginSession loginSession = new BukkitLoginSession(username, profile);
-        plugin.putSession(player.getAddress(), loginSession);
+        boolean exists = core.getStorage().existsProfile(username);
+        if (exists) {
+            BukkitLoginSession loginSession = new BukkitLoginSession(username, profile);
+            plugin.putSession(player.getAddress(), loginSession);
+        } else {
+            try {
+                source.kick("You are not on the whitelist for cracked clients. Please contact the server owner on discord to add you.");
+            } catch (Exception e) {
+                plugin.getLog().error("Failed on kicking cracked player: {}", profile, e);
+            }
+        }
     }
     
     private static FloodgatePlayer getFloodgatePlayer(String username) {
